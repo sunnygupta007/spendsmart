@@ -1,0 +1,159 @@
+{% extends "transactions/base.html" %} {% block title %}Register - SpendSmart 
+{% endblock %} {% block content %}
+<div class="row justify-content-center mt-5">
+  <div class="col-md-5">
+    <div class="card shadow-sm border-0">
+      <div class="card-body p-5">
+        <h3 class="text-center mb-4 text-primary fw-bold">Create an Account</h3>
+
+        <form id="registerForm">
+          <div
+            id="errorBox"
+            class="alert alert-danger d-none shadow-sm border-0 rounded-3"
+          ></div>
+
+          <div class="mb-3">
+            <label class="form-label fw-bold text-secondary">Username</label>
+            <input type="text" id="username" class="form-control" required />
+            <div
+              id="usernameError"
+              class="text-danger small mt-1 fw-semibold d-none"
+            ></div>
+            <div class="form-text small text-muted">
+              Letters, digits and @/./+/-/_ only.
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label fw-bold text-secondary">Password</label>
+            <div class="input-group">
+              <input
+                type="password"
+                id="password"
+                class="form-control"
+                required
+              />
+              <button
+                class="btn btn-outline-secondary"
+                type="button"
+                id="togglePassword"
+              >
+                <i class="bi bi-eye" id="toggleIcon"></i>
+              </button>
+            </div>
+            <div
+              id="passwordError"
+              class="text-danger small mt-1 fw-semibold d-none"
+            ></div>
+            <div class="form-text small text-muted">
+              <ul>
+                <li>
+                  Your password can't be too similar to your other personal
+                  information.
+                </li>
+                <li>Your password must contain at least 8 characters.</li>
+                <li>Your password can't be a commonly used password.</li>
+              </ul>
+            </div>
+          </div>
+
+          <button class="btn btn-primary w-100 py-2 fw-bold" type="submit">
+            Sign Up
+          </button>
+        </form>
+
+        <div class="mt-4 text-center">
+          <p class="text-muted mb-0">
+            Already have an account?
+            <a
+              href="{% url 'users:login' %}"
+              class="text-decoration-none fw-bold"
+              >Log in here</a
+            >.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document
+    .getElementById("registerForm")
+    .addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const usernameInput = document.getElementById("username");
+      const passwordInput = document.getElementById("password");
+      const errorBox = document.getElementById("errorBox");
+
+      // Reset errors
+      errorBox.classList.add("d-none");
+      document.getElementById("usernameError").classList.add("d-none");
+      document.getElementById("passwordError").classList.add("d-none");
+      usernameInput.classList.remove("is-invalid");
+      passwordInput.classList.remove("is-invalid");
+
+      try {
+        const response = await fetch("/api/register/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username: usernameInput.value,
+            password: passwordInput.value,
+          }),
+        });
+
+        if (response.ok) {
+          // Save a success message to memory, THEN redirect
+          sessionStorage.setItem(
+            "toastMessage",
+            "Account created successfully! Please log in."
+          );
+          sessionStorage.setItem("toastType", "success");
+          window.location.href = "/users/login/";
+        } else {
+          // Handle specific field errors returned by Django
+          const data = await response.json();
+
+          if (data.username) {
+            usernameInput.classList.add("is-invalid");
+            const err = document.getElementById("usernameError");
+            err.innerHTML = `<span><i class="bi bi-exclamation-circle"></i> ${data.username[0]}</span>`;
+            err.classList.remove("d-none");
+          }
+          if (data.password) {
+            passwordInput.classList.add("is-invalid");
+            const err = document.getElementById("passwordError");
+            err.innerHTML = `<span><i class="bi bi-exclamation-circle"></i> ${data.password[0]}</span>`;
+            err.classList.remove("d-none");
+          }
+          if (!data.username && !data.password) {
+            errorBox.classList.remove("d-none");
+            errorBox.innerText = "Please correct the errors below.";
+          }
+        }
+      } catch (error) {
+        errorBox.classList.remove("d-none");
+        errorBox.innerText = "A network error occurred.";
+      }
+    });
+
+    // --- ADD THIS NEW TOGGLE LOGIC ---
+    document.getElementById('togglePassword').addEventListener('click', function () {
+        const passwordInput = document.getElementById('password');
+        const toggleIcon = document.getElementById('toggleIcon');
+        
+        // Check the current type of the input
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text'; // Show password
+            toggleIcon.classList.remove('bi-eye');
+            toggleIcon.classList.add('bi-eye-slash'); // Change icon to eye-slash
+        } else {
+            passwordInput.type = 'password'; // Hide password
+            toggleIcon.classList.remove('bi-eye-slash');
+            toggleIcon.classList.add('bi-eye'); // Change icon back to eye
+        }
+    });
+</script>
+{% endblock %}

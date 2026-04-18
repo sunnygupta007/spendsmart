@@ -1,0 +1,132 @@
+{% extends "transactions/base.html" %}
+
+{% block title %}Add Transaction - SpendSmart{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-4">
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-primary text-white py-3">
+                <h4 class="mb-0 fw-bold"><i class="bi bi-plus-circle me-2"></i>New Transaction</h4>
+            </div>
+            <div class="card-body p-4">
+                
+                <form id="addTransactionForm">
+                    <div id="errorBox" class="alert alert-danger d-none shadow-sm border-0 rounded-3"></div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-secondary">Transaction Type</label>
+                        <select id="type" class="form-select" required>
+                            <option value="EXPENSE">Expense</option>
+                            <option value="INCOME">Income</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-secondary">Amount (INR)</label>
+                        <input type="number" id="amount" step="0.01" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-secondary">Category</label>
+                        <select id="category" class="form-select" required>
+                            <option value="" disabled selected>Loading categories...</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-secondary">Date</label>
+                        <input type="date" id="date" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-secondary">Notes (Optional)</label>
+                        <textarea id="notes" class="form-control" rows="2"></textarea>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{% url 'transactions:dashboard' %}" class="btn btn-outline-secondary px-4">Cancel</a>
+                        <button class="btn btn-success px-4 fw-bold" type="submit">Save Transaction</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        // Automatically set today's date in the date picker
+        document.getElementById('date').valueAsDate = new Date();
+        
+        // Fetch categories to populate the dropdown
+        fetchCategories();
+    });
+
+    // 1. Fetch Categories from the API
+    async function fetchCategories() {
+        try {
+            const response = await fetch('/api/categories/'); // Assuming you have this endpoint!
+            if (response.ok) {
+                const categories = await response.json();
+                const categorySelect = document.getElementById('category');
+                
+                categorySelect.innerHTML = '<option value="" disabled selected>Select a category...</option>';
+                categories.forEach(cat => {
+                    categorySelect.innerHTML += `<option value="${cat.id}">${cat.name}</option>`;
+                });
+            }
+        } catch (error) {
+            console.error("Failed to fetch categories", error);
+        }
+    }
+
+    // 2. Intercept the Form Submission
+    document.getElementById('addTransactionForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const errorBox = document.getElementById('errorBox');
+        errorBox.classList.add('d-none');
+
+        // Gather and sanitize data
+        const payload = {
+            transaction_type: document.getElementById('type').value,
+            amount: document.getElementById('amount').value,
+            category_id: document.getElementById('category').value,
+            date: document.getElementById('date').value,
+            // .trim() removes spaces from both ends
+            notes: document.getElementById('notes').value.trim() 
+        };
+
+        try {
+            // Send the POST request to your API
+            const response = await fetch('/api/transactions/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (response.ok) {
+                // Set a success message and route back to the dashboard!
+                sessionStorage.setItem('toastMessage', 'Transaction added successfully!');
+                window.location.href = '/';
+            } else {
+            const errorData = await response.json();
+            errorBox.classList.remove('d-none');
+            
+            // This pulls out the specific error messages and joins them into a sentence
+            let errorMessage = "";
+            for (const key in errorData) {
+                errorMessage += `${key}: ${errorData[key].join(", ")} `;
+            }
+            errorBox.innerText = errorMessage; 
+        }
+        } catch (error) {
+            console.error(error);
+            errorBox.classList.remove('d-none');
+            errorBox.innerText = "A network error occurred while saving.";
+        }
+    });
+</script>
+{% endblock %}
