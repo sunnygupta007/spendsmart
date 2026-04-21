@@ -57,9 +57,13 @@
             </div>
           </div>
 
-          <button class="btn btn-primary w-100 py-2 fw-bold" type="submit">
+          <!-- <button class="btn btn-primary w-100 py-2 fw-bold" type="submit">
             Sign Up
-          </button>
+          </button> -->
+          <button type="submit" class="btn btn-primary w-100 py-2 fw-bold" id="registerBtn">
+    <span class="button-text">Sign Up</span>
+    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true" id="registerSpinner"></span>
+</button>
         </form>
 
         <div class="mt-4 text-center">
@@ -78,6 +82,35 @@
 </div>
 
 <script>
+// Function to reset the Sign Up Button
+function resetRegisterButton() {
+    const registerBtn = document.getElementById('registerBtn');
+    const registerSpinner = document.getElementById('registerSpinner');
+    const buttonText = registerBtn.querySelector('.button-text');
+
+    registerBtn.disabled = false;
+    registerSpinner.classList.add('d-none');
+    buttonText.textContent = 'Sign Up';
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+        const registerForm = document.querySelector('form'); // Make sure this targets your form
+        const registerBtn = document.getElementById('registerBtn');
+        const registerSpinner = document.getElementById('registerSpinner');
+        const buttonText = registerBtn.querySelector('.button-text');
+
+        registerForm.addEventListener('submit', function(event) {
+            // Disable the button to prevent multiple clicks
+            registerBtn.disabled = true;
+
+            // Show the spinner
+            registerSpinner.classList.remove('d-none');
+            
+            // Optional: Change button text
+            buttonText.textContent = ' Signing up...';
+        });
+    });
+
   document
     .getElementById("registerForm")
     .addEventListener("submit", async function (e) {
@@ -115,6 +148,7 @@
         } else {
           // Handle specific field errors returned by Django
           const data = await response.json();
+          resetRegisterButton(); // <--- CALL THE RESET FUNCTION HERE
 
           if (data.username) {
             usernameInput.classList.add("is-invalid");
@@ -136,6 +170,7 @@
       } catch (error) {
         errorBox.classList.remove("d-none");
         errorBox.innerText = "A network error occurred.";
+        resetRegisterButton(); // <--- CALL THE RESET FUNCTION HERE
       }
     });
 

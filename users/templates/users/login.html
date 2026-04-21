@@ -29,9 +29,13 @@
             </div>
           </div>
 
-          <button class="btn btn-primary w-100 py-2 mt-3 fw-bold" type="submit">
+          <!-- <button class="btn btn-primary w-100 py-2 mt-3 fw-bold" type="submit">
             Log In
-          </button>
+          </button> -->
+          <button type="submit" class="btn btn-primary w-100 py-2 mt-3 fw-bold" id="loginBtn">
+    <span class="button-text">Login</span>
+    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true" id="loginSpinner"></span>
+</button>
         </form>
 
         <div class="mt-4 text-center">
@@ -50,6 +54,38 @@
 </div>
 
 <script>
+// Function to reset the Login Button
+function resetLoginButton() {
+    const loginBtn = document.getElementById('loginBtn');
+    const loginSpinner = document.getElementById('loginSpinner');
+    const buttonText = loginBtn.querySelector('.button-text');
+
+    loginBtn.disabled = false;                  // Re-enable the button
+    loginSpinner.classList.add('d-none');       // Hide the spinner
+    buttonText.textContent = 'Login';           // Reset the text
+}
+
+  document.addEventListener("DOMContentLoaded", function() {
+        const loginForm = document.querySelector('form'); // Make sure this targets your form
+        const loginBtn = document.getElementById('loginBtn');
+        const loginSpinner = document.getElementById('loginSpinner');
+        const buttonText = loginBtn.querySelector('.button-text');
+
+        loginForm.addEventListener('submit', function(event) {
+            // Disable the button to prevent multiple clicks
+            loginBtn.disabled = true;
+
+            // Optional: Hide the text and just show the spinner
+            // buttonText.classList.add('d-none'); 
+
+            // Show the spinner
+            loginSpinner.classList.remove('d-none');
+            
+            // Optional: Change button text
+            buttonText.textContent = ' Logging in...';
+        });
+    });
+
   document
     .getElementById("loginForm")
     .addEventListener("submit", async function (e) {
@@ -73,11 +109,13 @@
         } else {
           errorBox.classList.remove("d-none");
           errorBox.innerText = "Invalid username or password.";
+          resetLoginButton(); // <--- CALL THE RESET FUNCTION HERE
         }
       } catch (error) {
         console.error(error);
         errorBox.classList.remove("d-none");
         errorBox.innerText = "A network error occurred.";
+        resetLoginButton(); // <--- CALL THE RESET FUNCTION HERE
       }
     });
 

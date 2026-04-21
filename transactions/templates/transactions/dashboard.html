@@ -1,5 +1,5 @@
 {% extends "transactions/base.html" %} 
-{% block title %}Dashboard - SpendSmart{% endblock %} 
+{% block title %}SpendSmart{% endblock %} 
 
 {% block content %}
 <div id="secure-dashboard-content" style="opacity: 0; transition: opacity 0.3s ease-in;">
@@ -68,26 +68,18 @@
     </div>
   </div>
 
-  <div>
-    <a
-      href="/api/export/csv/"
-      class="btn btn-outline-success shadow-sm fw-bold me-2"
-    >
-      <i class="bi bi-file-earmark-spreadsheet me-1"></i> Export CSV
+  <div class="d-flex flex-wrap justify-content-md-end gap-2 mb-3">
+    <a href="/api/export/csv/" class="btn btn-outline-success shadow-sm fw-bold">
+        <i class="bi bi-file-earmark-spreadsheet me-1"></i> Export CSV
     </a>
-    <button
-      class="btn btn-outline-primary shadow-sm fw-bold me-2"
-      onclick="openBudgetModal(event)"
-    >
-      <i class="bi bi-bullseye me-1"></i> Set Budget
+    <button class="btn btn-outline-primary shadow-sm fw-bold" onclick="openBudgetModal(event)">
+        <i class="bi bi-bullseye me-1"></i> Set Budget
     </button>
-    <button
-      class="btn btn-primary shadow-sm fw-bold"
-      onclick="openAddModal(event)"
-    >
-      <i class="bi bi-plus-lg me-1"></i> Add Transaction
+    <button class="btn btn-primary shadow-sm fw-bold" onclick="openAddModal(event)">
+        <i class="bi bi-plus-lg me-1"></i> Add Transaction
     </button>
-  </div>
+</div>
+
 </div>
 
 <div id="budgetAlertContainer" class="mb-4"></div>
