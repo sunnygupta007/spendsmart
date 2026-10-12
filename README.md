@@ -6,27 +6,19 @@ A personal finance tracker for logging income and expenses, setting monthly cate
 
 ## Screenshots
 
-Drop PNG files into the [`screenshots/`](screenshots/) folder using the names below. Capture them with a dummy account and sample amounts (not real personal data).
+### Dashboard
 
-| Screen | File | What to capture |
-|--------|------|-----------------|
-| Dashboard (hero) | `screenshots/dashboard.png` | Overview with month picker, doughnut chart, transaction list, and budget cards |
-| Login | `screenshots/login.png` | Login card at `/users/login/` |
-| Register | `screenshots/register.png` | Register card with password rules |
-| Add transaction | `screenshots/add-transaction.png` | Add Transaction modal or `/add/` form |
-| Budgets | `screenshots/budgets.png` | Set Budget modal and/or progress bars |
-| Dark mode | `screenshots/dashboard-dark.png` | Same dashboard after the theme toggle |
+Overview for the selected month: spending doughnut chart, transaction list, and monthly budget tracker.
 
-```markdown
-![Dashboard](screenshots/dashboard.png)
-![Login](screenshots/login.png)
-![Register](screenshots/register.png)
-![Add transaction](screenshots/add-transaction.png)
-![Budgets](screenshots/budgets.png)
-![Dark mode](screenshots/dashboard-dark.png)
-```
+![SpendSmart dashboard with spending chart, transactions, and budget tracker](screenshots/dashboard.png)
 
-Optional extra: a shot of the budget warning when a category is at or above 90% of its limit.
+### Login
+
+![SpendSmart login page](screenshots/login.png)
+
+### Register
+
+![SpendSmart registration page with password rules](screenshots/register.png)
 
 ## Features
 
